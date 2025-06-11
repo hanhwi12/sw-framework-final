@@ -27,8 +27,45 @@
 		document.cookie = name + "=" + encodeURIComponent(value) + expires + "; path=/";
 	}
 	
-	document.getElementById('login_btn').addEventListener('click', function() { const user_id = document.getElementById('user_id').value;
-	const user_pw = document.getElementById('user_pw').value;
-	// id, pw 가 입력되어 있는지 확인
-	if(!user_id || !user_pw) {
-	document.getElementById('login_msg').innerHTML = 'id 혹은 pw를 입력해주세요.';
+	document.getElementById('login_btn').addEventListener('click', function() {
+		const user_id = document.getElementById('user_id').value;
+		const user_pw = document.getElementById('user_pw').value;
+	
+		if(!user_id || !user_pw) {
+		document.getElementById('login_msg').innerHTML = 'id 혹은 pw를 입력해주세요.';
+		return;
+		}
+	}
+	
+	var xhr = new XMLHttpRequest();
+	xhr.open('POST', '/rest/request-login');
+	xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+	xhr.withCredentials = true;
+	
+	xhr.onreadystatechange = function() {
+		if(xhr.readyState == XMLHttpRequest.DONE) { // 서버에서 정상적인 응답을 성공
+			if(xhr.status == 200) {
+				const result = JSON.parse(xhr.responseText);
+				if(result.REPL_CD != '0000') {
+					document.getElementById('login_msg').innerHTML = result.REPL_PAGE_MSG;
+				}
+			}
+		}
+		else {
+			document.getElementById('login_msg').innerHTML = JSON.stringify(result.memberInfo);
+			window.location.href = '/home';
+		}
+		
+		else {
+		}
+		
+		const data = JSON.stringify({
+			"userId"user_id,
+			"userPw"user_pw
+		});
+		
+		xhr.send(data);
+		
+</script>
+</body>
+</html>
